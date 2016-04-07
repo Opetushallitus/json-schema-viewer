@@ -4,7 +4,7 @@ if (!window.location.origin) {
 }
 
 
-if (typeof JSV === 'undefined') {
+if (typeof window.JSV === 'undefined') {
     /**
      * JSV namespace for JSON Schema Viewer.
      * @namespace
@@ -722,7 +722,7 @@ if (typeof JSV === 'undefined') {
 
             node = {
                 description: schema.description || s.description,
-                name: (schema.$ref && real ? name : false) || s.title || name || 'schema',
+                name: (real ? name : false) || s.title || name || 'schema',
                 isReal: real,
                 plainName: name,
                 type: s.type,

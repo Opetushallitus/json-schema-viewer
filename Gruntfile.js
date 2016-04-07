@@ -265,8 +265,6 @@ module.exports = function(grunt) {
                         './bower_components/jsonpointer.js/src/jsonpointer.js',
                         './bower_components/highlightjs/highlight.pack.js',
                         './<%= pkg.name %>.js',
-                        './lib/example.js',
-
                     ],
                     './prod/<%= pkg.version %>/<%= now %>/<%= ver %>/lib/preinit.js' : [
                         './lib/preinit.js',
