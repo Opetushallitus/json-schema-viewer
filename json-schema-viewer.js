@@ -66,7 +66,7 @@ if (typeof window.JSV === 'undefined') {
          */
         counter: 0,
 
-        maxLabelLength: 0,
+        maxLabelLength: {},
 
         /**
          * Default maximum depth for recursive schemas
@@ -311,10 +311,8 @@ if (typeof window.JSV === 'undefined') {
 
                         try {
                             $.parseJSON(data);
-                            //console.info(data);
                             $('#textarea-json').val(data);
                         } catch(err) {
-                            //JSV.showError('Unable to parse JSON: <br/>' + e);
                             JSV.showError('Failed to load ' + file.name + '. The file is not valid JSON. <br/>The error: <i>' + err + '</i>');
                         }
 
@@ -338,7 +336,6 @@ if (typeof window.JSV === 'undefined') {
                 if (result) {
                     JSV.showValResult(result);
                 }
-                //console.info(result);
             });
         },
 
@@ -1087,12 +1084,20 @@ if (typeof window.JSV === 'undefined') {
             JSV.tree.size([newHeight, JSV.viewerWidth]);
 
             // Compute the new tree layout.
-            var nodes = JSV.tree.nodes(root).reverse(),
-                links = JSV.tree.links(nodes);
+            var nodes = JSV.tree.nodes(root),
+              links = JSV.tree.links(nodes);
+
+            // Call JSV.visit function to establish maxLabelLength
+            JSV.visit(JSV.treeData, function(d) {
+                JSV.maxLabelLength[d.depth] = Math.max(d.name.length, JSV.maxLabelLength[d.depth] ? JSV.maxLabelLength[d.depth] : 0);
+            }, function(d) {
+                return d.children && d.children.length > 0 ? d.children : null;
+            });
+
 
             // Set widths between levels based on maxLabelLength.
             nodes.forEach(function(d) {
-                d.y = (d.depth * (JSV.maxLabelLength * 8)); //maxLabelLength * 8px
+                d.y = d.parent ? d.parent.y + JSV.maxLabelLength[d.parent.depth] * 8 + 100: 0;
                 // alternatively to keep a fixed scale one can set a fixed depth per level
                 // Normalize for fixed-depth by commenting out below line
                 // d.y = (d.depth * 500); //500px per level.
@@ -1248,8 +1253,6 @@ if (typeof window.JSV === 'undefined') {
 
                 JSV.compileData(tv4.getSchema(JSV.schema),false,'schema');
 
-                // Calculate total nodes, max label length
-                var totalNodes = 0;
                 // panning variables
                 //var panSpeed = 200;
                 //var panBoundary = 20; // Within 20px from edges will pan when dragging.
@@ -1269,15 +1272,6 @@ if (typeof window.JSV === 'undefined') {
 
                 JSV.tree = d3.layout.tree()
                     .size([viewerHeight, viewerWidth]);
-
-                // Call JSV.visit function to establish maxLabelLength
-                JSV.visit(JSV.treeData, function(d) {
-                    totalNodes++;
-                    JSV.maxLabelLength = Math.max(d.name.length, JSV.maxLabelLength);
-
-                }, function(d) {
-                    return d.children && d.children.length > 0 ? d.children : null;
-                });
 
                 // Sort the tree initially in case the JSON isn't in a sorted order.
                 //JSV.sortTree();
