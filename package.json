@@ -15,7 +15,7 @@
   "production": "http://jlblcc.github.io/json-schema-viewer",
   "license": "Unlicense",
   "dependencies": {
-    "grunt": "~0",
+    "grunt": "~1.3.0",
     "grunt-cli": "~0",
     "grunt-contrib-clean": "~0",
     "grunt-contrib-concat": "~0",
